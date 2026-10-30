@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Swasti ERP">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Swasti Fertilizer — Enterprise POS & Multi-Cycle Credit Audit</title>
+<style>
+  :root {
+    --bg-cream: #ECF3F0;
+    --card-white: #FFFFFF;
+    --emerald-deepest: #022C22;
+    --emerald-dark: #064E3B;
+    --emerald-mid: #065F46;
+    --emerald-bright: #047857;
+    --text-dark: #091E16;
+    --text-muted: #4D685C;
+    --border-soft: #CCE0D6;
+    --green-pos: #065F46;
+    --green-bg: #D1FAE5;
+    --amber-warn: #B45309;
+    --amber-bg: #FEF3C7;
+    --red-due: #BE123C;
+    --red-bg: #FFE4E6;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+    line-height: 1.4;
+    padding-bottom: 70px;
+  }
+
+  .app-header {
+    background: linear-gradient(135deg, #011B14 0%, var(--emerald-deepest) 55%, var(--emerald-dark) 100%);
+    color: #fff;
+    padding: 14px 14px 0 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(2, 44, 34, 0.28);
+    border-bottom: 3px solid #059669;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1240px;
+    margin: 0 auto 12px auto;
+  }
+
+  .brand-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: #A7F3D0;
+    margin-top: 2px;
+  }
+
+  .proprietor-badge {
+    background: rgba(6, 95, 70, 0.55);
+    border: 1px solid rgba(167, 243, 208, 0.35);
+    color: #ECFDF5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+
+  .nav-scroller {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .nav-scroller::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 7px 13px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-tab.active {
+    background: #FFFFFF;
+    color: var(--emerald-deepest);
+    border-color: #FFFFFF;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .badge-pill {
+    background: #059669;
+    color: #FFFFFF;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 800;
+  }
+  .badge-pill.gold { background: #D97706; }
+
+  .container {
+    max-width: 1240px;
+    margin: 14px auto;
+    padding: 0 12px;
+  }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .hero-banner {
+    background: linear-gradient(135deg, var(--emerald-deepest) 0%, var(--emerald-dark) 55%, var(--emerald-mid) 100%);
+    color: #fff;
+    padding: 18px 20px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 20px rgba(2, 44, 34, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .hero-banner h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 3px;
+  }
+
+  .hero-banner p {
+    font-size: 12px;
+    color: #D1FAE5;
+    margin-bottom: 14px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .pill-action {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .pill-action.solid {
+    background: #FFFFFF;
+    color: var(--emerald-deepest);
+    border-color: #FFFFFF;
+  }
+  .pill-action.gold {
+    background: #F59E0B;
+    color: #022C22;
+    border-color: #F59E0B;
+    font-weight: 800;
+  }
+
+  .cycle-strip-wrap {
+    background: #DCECE5;
+    border: 1px solid #B5D1C4;
+    border-radius: 14px;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .cycle-tabs-list {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    align-items: center;
+    scrollbar-width: none;
+  }
+  .cycle-tabs-list::-webkit-scrollbar { display: none; }
+
+  .cycle-tab-btn {
+    background: #FFFFFF;
+    color: var(--emerald-deepest);
+    border: 1px solid #A7C9B9;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .cycle-tab-btn.active {
+    background: var(--emerald-deepest);
+    color: #FFFFFF;
+    border-color: var(--emerald-deepest);
+  }
+  .cycle-add-btn {
+    background: #F59E0B;
+    color: #022C22;
+    border: none;
+    padding: 6px 13px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 900;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .card {
+    background: var(--card-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(2, 44, 34, 0.04);
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .big-number {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 4px 0 2px 0;
+  }
+
+  .sub-stat {
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+
+  .progress-track {
+    background: #D8EADB;
+    height: 6px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, var(--emerald-deepest), var(--emerald-bright));
+    height: 100%;
+    border-radius: 5px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .chip {
+    background: #DCECE5;
+    color: var(--emerald-deepest);
+    border: 1px solid #B8D4C8;
+    padding: 5px 11px;
+    border-radius: 18px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .chip.active {
+    background: var(--emerald-deepest);
+    color: #fff;
+    border-color: var(--emerald-deepest);
+  }
+
+  .form-group { margin-bottom: 12px; }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .input-box, .select-box {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #B5D1C4;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #F4F9F6;
+    color: var(--text-dark);
+  }
+
+  .audit-input {
+    width: 76px;
+    padding: 4px 5px;
+    border: 1.5px solid #059669;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 800;
+    background: #F0FDF4;
+    color: var(--emerald-deepest);
+    text-align: right;
+  }
+  .audit-input.coll {
+    border-color: #D97706;
+    background: #FFFBEB;
+    color: #92400E;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--emerald-deepest), var(--emerald-mid));
+    color: #fff;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    background: #fff;
+  }
+
+  th {
+    background: #064E3B;
+    color: #FFFFFF;
+    font-weight: 700;
+    text-align: left;
+    padding: 8px 7px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 9.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 6px 7px;
+    border-bottom: 1px solid #E4EFEA;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 9.5px;
+    font-weight: 800;
+  }
+  .tag-green { background: var(--green-bg); color: var(--green-pos); }
+  .tag-amber { background: var(--amber-bg); color: var(--amber-warn); }
+  .tag-red { background: var(--red-bg); color: var(--red-due); }
+
+  .chart-card {
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .bar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 10.5px;
+  }
+  .bar-label {
+    width: 105px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-outer {
+    flex: 1;
+    background: #E5EFE9;
+    height: 14px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-inner-due {
+    background: #BE123C;
+    height: 100%;
+    border-radius: 6px;
+  }
+  .bar-inner-coll {
+    background: #059669;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 6px;
+  }
+  .bar-val {
+    width: 72px;
+    text-align: right;
+    font-weight: 800;
+    font-size: 10px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 28, 21, 0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    z-index: 200;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal-card {
+    background: var(--bg-cream);
+    width: 100%;
+    max-width: 520px;
+    border-radius: 20px;
+    overflow: hidden;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--emerald-deepest), var(--emerald-dark));
+    color: #fff;
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .modal-body {
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .cycle-divider-left {
+    border-left: 2px solid #047857 !important;
+  }
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="header-top">
+      <div>
+        <div class="brand-title">🌱 Swasti Fertilizer</div>
+        <div class="brand-sub">Haripukuria, Haringhata, Nadia • Prop: Bholanath Ghosh</div>
+      </div>
+      <div class="proprietor-badge">PIN: 741257</div>
+    </div>
+
+    <div class="nav-scroller">
+      <button class="nav-tab active" onclick="openTab('home', this)">Home <span class="badge-pill">Live</span></button>
+      <button class="nav-tab" onclick="openTab('pos', this)">POS Billing</button>
+      <button class="nav-tab" onclick="openTab('audit', this)">📋 Credit Analysis (Book Audit) <span class="badge-pill gold" id="badge-total-khata">515</span></button>
+      <button class="nav-tab" onclick="openTab('customers', this)">Customer Accounts</button>
+      <button class="nav-tab" onclick="openTab('inventory', this)">Product SKUs & Stock</button>
+      <button class="nav-tab" onclick="openTab('distributors', this)">Distributors & Profit</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- TAB 1: HOME -->
+    <div id="tab-home" class="tab-pane active">
+      <div class="hero-banner">
+        <h2>Good morning, Swasti Counter</h2>
+        <p>Thursday, 29 October 2026 • Real-Time POS Counter & 515 Farmer Khata Control</p>
+        <div class="hero-actions">
+          <button class="pill-action solid" onclick="triggerTab('pos')">+ New Counter Bill</button>
+          <button class="pill-action gold" onclick="triggerTab('audit')">📋 Open Multi-Cycle Credit Analysis (515 Accounts)</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-label">
+            <span>Today's Counter Turnover</span>
+            <span class="tag tag-green">LIVE POS</span>
+          </div>
+          <div class="big-number" id="home-today-sales">₹18,450</div>
+          <div class="sub-stat">Cash & UPI: <strong id="home-today-cash">₹11,920</strong> • POS Credit: <strong id="home-today-credit">₹6,530</strong></div>
+          <div class="progress-track"><div class="progress-fill" style="width: 65%;"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">
+            <span>Handwritten Khata Standing (Latest Cycle)</span>
+            <span class="tag tag-amber" id="home-active-cycle-tag">OCT '26 - FEB '27</span>
+          </div>
+          <div class="big-number" style="color: var(--red-due);" id="home-book-standing">₹31,73,976</div>
+          <div class="sub-stat">Across <strong>All 515 Accounts</strong> • Decoupled from Daily POS</div>
+          <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-label"><span>Today's Net Profit</span> <span class="tag tag-green">MARGIN</span></div>
+          <div class="big-number" style="color: var(--green-pos);" id="home-today-profit">₹3,140</div>
+          <div class="sub-stat">Counter Wholesale vs Selling Profit</div>
+        </div>
+        <div class="card">
+          <div class="card-label"><span>Total Audit Cycles Tracked</span></div>
+          <div class="big-number" style="font-size:20px; margin-top:6px;" id="home-cycle-count">4 Cycles</div>
+          <div class="sub-stat">May '24, Jan '25, Jun '25 + Custom</div>
+        </div>
+        <div class="card">
+          <div class="card-label"><span>Distributor Payables</span></div>
+          <div class="big-number">₹1,14,200</div>
+          <div class="sub-stat">Payable across 4 Stockists</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom: 10px;">
+          <span>Today's Counter Invoices</span>
+          <span style="font-size:10.5px; color:var(--emerald-dark); font-weight:800;">Real-time log</span>
+        </div>
+        <div class="table-wrap" style="max-height: 220px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Time / Inv</th>
+                <th>Customer & Para</th>
+                <th>Items Billed</th>
+                <th>Mode</th>
+                <th>Profit</th>
+                <th style="text-align:right;">Total</th>
+              </tr>
+            </thead>
+            <tbody id="home-tx-log"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MULTI-CYCLE CREDIT ANALYSIS -->
+    <div id="tab-audit" class="tab-pane">
+      <div class="hero-banner">
+        <h2>📋 Multi-Cycle Credit Analysis & Khata Audit (515 Customers)</h2>
+        <p><strong>Works Just Like Excel Tabs & Columns:</strong> Add unlimited seasonal collection cycles (e.g., Dec 2027 – Mar 2028) using the Calendar or manual text. Every new cycle adds editable <em>Book Credit</em>, <em>Recovered</em>, and <em>Net Remaining</em> columns side-by-side!</p>
+        <div class="hero-actions">
+          <button class="pill-action gold" onclick="openNewAuditCycleModal()">➕ Add New Collection Cycle (Calendar / Text)</button>
+          <button class="pill-action solid" onclick="exportAuditToCSV()">⬇️ Download Multi-Cycle Excel (.csv)</button>
+        </div>
+      </div>
+
+      <div class="cycle-strip-wrap">
+        <div style="display:flex; align-items:center; gap:8px; overflow-x:auto;">
+          <span style="font-size:11px; font-weight:900; color:var(--emerald-deepest); text-transform:uppercase; white-space:nowrap;">📅 Active Audit Cycles:</span>
+          <div class="cycle-tabs-list" id="cycle-tabs-bar"></div>
+        </div>
+        <button class="cycle-add-btn" onclick="openNewAuditCycleModal()">➕ Add Another Cycle Column</button>
+      </div>
+
+      <div class="grid-4">
+        <div class="card" style="padding:12px;">
+          <div class="card-label"><span>Previous Baseline (June '25)</span></div>
+          <div class="big-number" style="font-size:20px;" id="kpi-prev">₹31,73,976</div>
+          <div class="sub-stat">Historical Master Record</div>
+        </div>
+        <div class="card" style="padding:12px; border-left: 3px solid var(--emerald-bright);">
+          <div class="card-label"><span id="lbl-kpi-book">Book Credit</span></div>
+          <div class="big-number" style="font-size:20px; color:var(--emerald-deepest);" id="kpi-current">₹31,73,976</div>
+          <div class="sub-stat">Selected Cycle Total</div>
+        </div>
+        <div class="card" style="padding:12px; border-left: 3px solid #D97706;">
+          <div class="card-label"><span id="lbl-kpi-coll">Recovered in Cycle</span></div>
+          <div class="big-number" style="font-size:20px; color:#B45309;" id="kpi-coll">₹0</div>
+          <div class="sub-stat" id="kpi-rate">Recovery Rate: 0.0%</div>
+        </div>
+        <div class="card" style="padding:12px; border-left: 3px solid var(--red-due);">
+          <div class="card-label"><span>Net Remaining After Drive</span></div>
+          <div class="big-number" style="font-size:20px; color:var(--red-due);" id="kpi-net">₹31,73,976</div>
+          <div class="sub-stat">Carries to Next Cycle</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="chart-card">
+          <div class="card-label" style="margin-bottom: 10px;">
+            <span id="chart-title-para">📊 Village / Para Market Lockup Graphic</span>
+            <span class="tag tag-amber">GREEN = RECOVERED | RED = DUE</span>
+          </div>
+          <div id="para-chart-container" style="max-height: 220px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="card-label" style="margin-bottom: 10px;">
+            <span id="chart-title-gauge">🎯 Selected Cycle Recovery Gauge</span>
+            <span class="tag tag-green">PROGRESS</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-around; height:175px;">
+            <svg viewBox="0 0 36 36" style="width: 135px; height: 135px;">
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#D1FAE5" stroke-width="3.5" />
+              <path id="svg-recovery-ring" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#047857" stroke-width="3.5" stroke-linecap="round" />
+              <text x="18" y="20.5" font-size="6.5" font-weight="800" text-anchor="middle" fill="#022C22" id="svg-gauge-text">0.0%</text>
+            </svg>
+            <div style="font-size: 11.5px; line-height: 1.65;">
+              <div>📅 <strong id="gauge-cycle-name">Oct '26 - Feb '27</strong></div>
+              <div>🟢 <strong>Recovered:</strong> <span id="gauge-coll-val">₹0</span></div>
+              <div>🔴 <strong>Net Due:</strong> <span id="gauge-rem-val">₹31.74 L</span></div>
+              <div style="margin-top:4px;">
+                <button class="chip active" style="font-size:10px; padding:4px 9px;" onclick="openNewAuditCycleModal()">+ Add Next Cycle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARA-WISE SUMMARY TABLE -->
+      <div class="card">
+        <div class="card-label" style="margin-bottom: 8px;">
+          <span>🏘️ Village / Para-Wise Summary Across All Cycles (Tap any para to filter)</span>
+          <span class="tag tag-green">11 VILLAGE SECTORS</span>
+        </div>
+        <div class="table-wrap" style="max-height: 250px;">
+          <table>
+            <thead id="para-summary-thead"></thead>
+            <tbody id="para-summary-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FILTER CHIPS -->
+      <div class="filter-row" id="audit-para-chips">
+        <button class="chip active" onclick="filterAuditPara('ALL', this)">All Paras (515)</button>
+        <button class="chip" onclick="filterAuditPara('Ghosh Para', this)">Ghosh Para (31)</button>
+        <button class="chip" onclick="filterAuditPara('Muslim Para', this)">Muslim Para (85)</button>
+        <button class="chip" onclick="filterAuditPara('Khete Para', this)">Khete Para (17)</button>
+        <button class="chip" onclick="filterAuditPara('Das Para', this)">Das Para (16)</button>
+        <button class="chip" onclick="filterAuditPara('Kuli Para', this)">Kuli Para (21)</button>
+        <button class="chip" onclick="filterAuditPara('Singharoy Para', this)">Singharoy Para (21)</button>
+        <button class="chip" onclick="filterAuditPara('Roy Para', this)">Roy Para (78)</button>
+        <button class="chip" onclick="filterAuditPara('Malpara', this)">Malpara (167)</button>
+        <button class="chip" onclick="filterAuditPara('Dakshin Dutta Para', this)">Dakshin Dutta Para (12)</button>
+        <button class="chip" onclick="filterAuditPara('Baikara', this)">Baikara (21)</button>
+        <button class="chip" onclick="filterAuditPara('Nonaghata', this)">Nonaghata (46)</button>
+      </div>
+
+      <!-- WORKSHEET -->
+      <div class="card">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <input type="text" id="audit-search" class="input-box" style="max-width:320px;" placeholder="🔍 Search any of the 515 farmers or Page No..." oninput="renderAuditWorksheet()">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <button class="chip" id="btn-show-all" onclick="toggleShowAllRows()">Show All 515 Rows At Once</button>
+            <button class="cycle-add-btn" onclick="openNewAuditCycleModal()">➕ Add New Cycle Column</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead id="audit-worksheet-thead"></thead>
+            <tbody id="audit-worksheet-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: POS BILLING -->
+    <div id="tab-pos" class="tab-pane">
+      <div class="hero-banner">
+        <h2>Counter Billing & Margin Calculator</h2>
+        <p>Daily POS counter sales. Independent from the manual Credit Analysis sheet.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="form-group">
+            <label>Select Customer Account</label>
+            <select id="pos-cust-select" class="select-box"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Select Fertilizer / Pesticide SKU</label>
+            <select id="pos-sku-select" class="select-box" onchange="recalcPos()"></select>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Quantity</label>
+              <input type="number" id="pos-qty" class="input-box" value="1" min="1" oninput="recalcPos()">
+            </div>
+            <div class="form-group">
+              <label>Custom Selling Rate (₹)</label>
+              <input type="number" id="pos-custom-sell" class="input-box" oninput="recalcPosCustom()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Payment Settlement Mode</label>
+            <select id="pos-mode" class="select-box">
+              <option value="Credit Account">POS Credit Account</option>
+              <option value="Cash">Cash at Counter</option>
+              <option value="UPI / Online">UPI / Online</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" onclick="submitPosInvoice()">Generate Invoice & Log Sale</button>
+        </div>
+
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="card-label" style="margin-bottom:10px;">
+              <span>Live Rate & Margin Inspector</span>
+              <span class="tag tag-green" id="pos-sku-cat">INSECTICIDE</span>
+            </div>
+
+            <div style="background:#ECF6F2; padding:12px; border-radius:12px; border:1px solid var(--border-soft); margin-bottom:10px; font-size:12px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="color:var(--text-muted);">Wholesale Purchase Rate:</span>
+                <strong id="pos-buy-display">₹1,280 / unit</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="color:var(--text-muted);">Counter Selling Rate:</span>
+                <strong style="color:var(--green-pos);" id="pos-sell-display">₹1,480 / unit</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-top:1px dashed #B5D1C4; padding-top:6px;">
+                <span style="color:var(--text-muted);">Margin per Unit:</span>
+                <strong style="color:var(--emerald-deepest);" id="pos-unit-margin">₹200 (15.6%)</strong>
+              </div>
+            </div>
+
+            <div style="padding: 4px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px;">
+                <span>Total Invoice:</span>
+                <strong style="font-size:20px; color:var(--text-dark);" id="pos-grand-total">₹1,480</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--green-pos);">
+                <span>Your Profit:</span>
+                <strong id="pos-total-profit">₹200</strong>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--amber-bg); color:var(--amber-warn); padding:10px; border-radius:10px; font-size:11px; font-weight:600;">
+            🔒 Safe & Independent: POS counter transactions do not affect the separate seasonal Credit Analysis sheet.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CUSTOMER ACCOUNTS -->
+    <div id="tab-customers" class="tab-pane">
+      <div class="hero-banner">
+        <h2>Customer Accounts Directory (515 Farmers)</h2>
+        <p>Complete directory of all 515 customers with assigned credit limits and latest standing.</p>
+      </div>
+
+      <div class="card">
+        <input type="text" id="cust-search-input" class="input-box" style="margin-bottom:10px;" placeholder="🔍 Search customer name or village..." oninput="renderCustomerTable()">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sl.</th>
+                <th>Customer Name</th>
+                <th>Village / Para</th>
+                <th>Page</th>
+                <th>Credit Limit</th>
+                <th style="text-align:right;">Latest Net Standing</th>
+              </tr>
+            </thead>
+            <tbody id="cust-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: PRODUCT SKUs -->
+    <div id="tab-inventory" class="tab-pane">
+      <div class="hero-banner">
+        <h2>Master Product SKU & Stock Catalog</h2>
+        <p>Fertilizers, Insecticides, Fungicides, and Herbicides across all packaging sizes.</p>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Brand</th>
+                <th>Company</th>
+                <th>Pack SKU</th>
+                <th>Stock</th>
+                <th>Purchase Rate</th>
+                <th>Selling Rate</th>
+                <th>Margin</th>
+              </tr>
+            </thead>
+            <tbody id="sku-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: DISTRIBUTORS -->
+    <div id="tab-distributors" class="tab-pane">
+      <div class="hero-banner">
+        <h2>Wholesale Stockist & Distributor Ledger</h2>
+        <p>Track payments and procurement from major regional distributors.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h4>Kalyani Agro Agencies</h4>
+          <p class="sub-stat">IFFCO, Coromandel, IPL Distributor</p>
+          <div class="big-number" style="color:var(--red-due); margin-top:8px;">₹45,200</div>
+          <div class="sub-stat">Current Outstanding Payable</div>
+        </div>
+        <div class="card">
+          <h4>Nadia Krishi Rasayan</h4>
+          <p class="sub-stat">Syngenta, Bayer, FMC Distributor</p>
+          <div class="big-number" style="color:var(--red-due); margin-top:8px;">₹28,500</div>
+          <div class="sub-stat">Current Outstanding Payable</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: ADD NEW SEASONAL AUDIT CYCLE -->
+  <div id="new-cycle-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size:16px; font-weight:800;">➕ Add New Seasonal Collection Cycle</h3>
+          <div style="font-size:11px; opacity:0.88;">Adds a new set of Credit & Recovery columns right next to your current cycle</div>
+        </div>
+        <button class="close-btn" onclick="closeModal('new-cycle-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#ECF6F2; border:1px solid #B5D1C4; padding:10px 12px; border-radius:12px; font-size:11.5px; margin-bottom:14px; color:var(--emerald-deepest);">
+          💡 Pick dates from the <strong>Calendar</strong> below OR type any custom label (e.g., <em>Dec 2027 - Mar 2028</em>). A new set of <strong>Book Credit</strong>, <strong>Recovered</strong>, and <strong>Net Balance</strong> columns will be added side-by-side!
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>📅 1. Cycle Start Date (Calendar)</label>
+            <input type="date" id="cal-start-date" class="input-box" value="2027-12-01" onchange="syncCalendarToLabel()">
+          </div>
+          <div class="form-group">
+            <label>📅 2. Cycle End Date (Calendar)</label>
+            <input type="date" id="cal-end-date" class="input-box" value="2028-03-31" onchange="syncCalendarToLabel()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>✍️ Or Type / Edit Custom Cycle Title Manually</label>
+          <input type="text" id="nc-custom-label" class="input-box" value="Dec 2027 - Mar 2028">
+        </div>
+
+        <div class="form-group">
+          <label>Starting Book Credit Option for New Cycle</label>
+          <select id="nc-carry-mode" class="select-box">
+            <option value="carry">Carry forward Net Remaining Balance from previous cycle automatically</option>
+            <option value="zero">Start with ₹0 (Type all handwritten book balances fresh)</option>
+          </select>
+        </div>
+
+        <button class="btn-primary" onclick="confirmAddCycleColumn()">➕ Add Cycle Columns to Sheet</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const rawCompactData = [[1, "Jagadish Ghosh", "Ghosh Para", 23, 27088, 5000, 33953, 35718], [2, "Abhijit Ghosh", "Ghosh Para", 24, 0, 0, 4507, 5361], [3, "Shintu Ghosh", "Ghosh Para", 25, 4167, 1000, 4277, 2777], [4, "Somnath Ghosh", "Ghosh Para", 26, 10307, 3000, 33237, 38217], [5, "Bholanath Ghosh", "Ghosh Para", 27, 10513, 500, 10013, 9915], [6, "Gopal Ghosh", "Ghosh Para", 27, 1314, 200, 1114, 911], [7, "Basudev & Joydev", "Ghosh Para", 28, 5545, 2000, 7500, 9630], [8, "Kartik Ghosh(Gour)", "Ghosh Para", 30, 24275, 5000, 38700, 37476], [9, "Dinobandhu Ghosh( Raghu)", "Ghosh Para", 32, 7689, 2500, 7700, 5859], [10, "Sukumar Ghosh", "Ghosh Para", 34, 23843, 11500, 35600, 25966], [11, "Tarun Ghosh", "Ghosh Para", 36, 15758, 1000, 22261, 20731], [12, "Biplob Ghosh", "Ghosh Para", 36, 1166, 1200, 2960, 7146], [13, "Shambhu Ghosh", "Ghosh Para", 37, 11497, 2000, 11226, 9336], [14, "Gokul Ghosh", "Ghosh Para", 38, 320, 300, 0, 0], [15, "Bholanath Ghosh(Gokul)", "Ghosh Para", 39, 38358, 10000, 35629, 25876], [16, "Swapan Ghosh(Somnath)", "Ghosh Para", 41, 2055, 500, 3380, 4176], [17, "Gopinath Ghosh", "Ghosh Para", 42, 4446, 1000, 17051, 14450], [18, "Uttam Ghosh(Sanjay)", "Ghosh Para", 43, 673, 0, 673, 673], [19, "Sanjay Ghosh", "Ghosh Para", 43, 0, 0, 840, 1430], [20, "Baburam Ghosh", "Ghosh Para", 44, 2156, 500, 2096, 1996], [21, "Kali Ghosh", "Ghosh Para", 44, 4840, 2000, 3860, 2548], [22, "Bacchu Ghosh", "Ghosh Para", 45, 1345, 500, 2117, 1597], [23, "Ashok Ghosh", "Ghosh Para", 45, 165, 0, 165, 65], [24, "Radheshyam Ghosh", "Ghosh Para", 46, 774, 500, 931, 1066], [25, "Bishu Ghosh(Bappa)", "Ghosh Para", 47, 6320, 1300, 5610, 5110], [26, "Bacharam Ghosh", "Ghosh Para", 47, 1000, 100, 2590, 2420], [27, "Chitto Ghosh", "Ghosh Para", 48, 4638, 1000, 5621, 7496], [28, "Shyamal Ghosh", "Ghosh Para", 48, 2075, 1000, 2135, 2349], [29, "Basudev Ghosh", "Ghosh Para", 49, 0, 0, 0, 0], [30, "Kamal/Tapas", "Ghosh Para", 49, 0, 200, 520, 770], [31, "Madan Ghosh", "Ghosh Para", 49, 4620, 4000, 16385, 12485], [32, "Rafik Mia(Mojameel)", "Muslim Para", 51, 11388, 1000, 15216, 17069], [33, "Idrish Mia", "Muslim Para", 52, 1811, 1100, 0, 0], [34, "Alauddin Mia(moni)", "Muslim Para", 53, 17863, 4000, 10000, 8000], [35, "Manirul Mia(Ala)", "Muslim Para", 55, 9193, 1000, 16298, 16120], [36, "Rasunali Mia", "Muslim Para", 55, 400, 0, 400, 400], [37, "Atauddin Mia", "Muslim Para", 56, 12975, 2000, 18664, 17763], [38, "Kalu molla", "Muslim Para", 57, 5291, 1000, 5797, 0], [39, "Salim Molla", "Muslim Para", 57, 2553, 500, 3698, 4039], [40, "Ohab Mia", "Muslim Para", 58, 27644, 1000, 41592, 47842], [41, "Rajjak Mia", "Muslim Para", 60, 1198, 0, 1303, 1303], [42, "Shahabuddin Mia", "Muslim Para", 60, 5237, 2500, 4937, 4337], [43, "Hazisaheb Mia", "Muslim Para", 61, 5500, 9000, 5500, 0], [44, "Najrul Mia", "Muslim Para", 61, 4710, 500, 300, 300], [45, "Morol Mia", "Muslim Para", 62, 7873, 1500, 9365, 9451], [46, "Ismile  Mia", "Muslim Para", 63, 2096, 0, 2096, 1595], [47, "Babun Mia", "Muslim Para", 64, 1523, 200, 741, 1581], [48, "Goffar Mia", "Muslim Para", 64, 0, 50, 0, 660], [49, "Mijanur Mia(Goffor)", "Muslim Para", 64, 3385, 0, 3899, 4719], [50, "Islam Mia", "Muslim Para", 65, 18919, 2000, 16919, 17349], [51, "Akbar Mia", "Muslim Para", 67, 3550, 2000, 3251, 2406], [52, "Hasem Mia", "Muslim Para", 68, 9817, 3000, 10815, 10343], [53, "Bablu mia", "Muslim Para", 70, 15750, 1000, 10400, 9400], [54, "Anarul Mia", "Muslim Para", 70, 7147, 1000, 6814, 7069], [55, "Abubakkar Mia", "Muslim Para", 71, 1950, 500, 1450, 1450], [56, "Alamin mia", "Muslim Para", 71, 1485, 200, 85, 7152], [57, "Kudroth/Ketaboli", "Muslim Para", 72, 103464, 80000, 92656, 92602], [58, "Foku Mia (Arif)", "Muslim Para", 77, 61420, 30000, 50000, 134244], [59, "Siraj + Saiful mia", "Muslim Para", 82, 95015, 10000, 97461, 103504], [60, "Mannan Mia", "Muslim Para", 87, 529, 0, 527, 0], [61, "Abdul Rahaman(Akkas)", "Muslim Para", 87, 7113, 0, 9787, 9621], [62, "Shahid Mia", "Muslim Para", 88, 11058, 4500, 26464, 27454], [63, "Mijanur Mia(rasid)", "Muslim Para", 89, 3560, 0, 3560, 1560], [64, "Saidul Mia(Rasid)", "Muslim Para", 89, 1483, 500, 1443, 1513], [65, "Bakibella Mia", "Muslim Para", 90, 7977, 2000, 21200, 18803], [66, "Saiful Mia (Rasid)", "Muslim Para", 91, 7209, 2000, 8773, 8863], [67, "Rahaman/Rahup", "Muslim Para", 92, 16222, 10000, 22700, 25538], [68, "Arshad Mia", "Muslim Para", 97, 2229, 500, 4580, 4456], [69, "Ekrabul Mia", "Muslim Para", 97, 22166, 3000, 48000, 49974], [70, "Alim Mia", "Muslim Para", 98, 4408, 500, 4028, 3528], [71, "Bakibella (Ekrabul)", "Muslim Para", 98, 295, 200, 120, 120], [72, "Chiddik Mia", "Muslim Para", 98, 703, 500, 370, 0], [73, "Sukro Mia", "Muslim Para", 98, 475, 50, 475, 0], [74, "Hazrat Mia (Aijul)", "Muslim Para", 99, 5540, 1000, 5494, 4994], [75, "Abdulla Mia", "Muslim Para", 99, 1150, 300, 1720, 1810], [76, "Khalek Mia", "Muslim Para", 99, 224, 0, 224, 224], [77, "Amanur Mia", "Muslim Para", 99, 434, 100, 524, 0], [78, "Najubuddin Mia", "Muslim Para", 100, 9180, 2000, 20506, 16046], [79, "Saha Jahan Mia", "Muslim Para", 100, 0, 0, 1208, 1208], [80, "Aijul Mia (Azgar)", "Muslim Para", 101, 14625, 3000, 20433, 24001], [81, "Azgar Mia", "Muslim Para", 102, 14930, 3000, 12734, 11384], [82, "Nurislam Mia", "Muslim Para", 103, 16964, 2000, 25414, 19633], [83, "Rulo Mia", "Muslim Para", 104, 13498, 500, 15262, 13262], [84, "Ibrahim Mia", "Muslim Para", 105, 4785, 2000, 1780, 1455], [85, "Mochanobi Mia + Mofijul", "Muslim Para", 106, 0, 500, 6714, 6158], [86, "Moidul Mia", "Muslim Para", 107, 1750, 1500, 0, 0], [87, "Sahabali Mia", "Muslim Para", 107, 630, 300, 597, 427], [88, "Ismile  Mia (Najer)", "Muslim Para", 108, 0, 0, 1182, 555], [89, "Janabali Mia", "Muslim Para", 109, 21865, 1000, 24470, 22796], [90, "Hazrat Mia (Mikail)", "Muslim Para", 110, 510, 100, 560, 1046], [91, "Sahabuddin Mia (Elahi)", "Muslim Para", 111, 7336, 2500, 9972, 4692], [92, "Mujibur Mia", "Muslim Para", 112, 13943, 1000, 16760, 16812], [93, "Rijabul Mia (Hobi)", "Muslim Para", 113, 10297, 1000, 8637, 9190], [94, "Alauddin Mia (Tahid)", "Muslim Para", 114, 5592, 1000, 5072, 4072], [95, "Salauddin Mia", "Muslim Para", 115, 16195, 4000, 18455, 20255], [96, "Jakir Mia (Tahid)", "Muslim Para", 117, 7647, 3000, 4902, 3902], [97, "Zulu Mia", "Muslim Para", 119, 24792, 10000, 49284, 40361], [98, "Foku Mia (Aftar)", "Muslim Para", 121, 4390, 2000, 3444, 3444], [99, "Sajul Mia", "Muslim Para", 122, 8311, 1000, 7721, 7910], [100, "Mogbul Mia", "Muslim Para", 123, 1470, 1000, 1885, 1015], [101, "Rokbul Mia", "Muslim Para", 124, 10609, 10000, 14282, 12729], [102, "Minar Mia", "Muslim Para", 125, 0, 100, 2972, 3380], [103, "Sariful Mia(Ahad)", "Muslim Para", 126, 6415, 1000, 13730, 22798], [104, "Kutubuddin Mia (Anil)", "Muslim Para", 127, 5166, 3000, 6191, 6762], [105, "Taher Uddin (Kutubuddin )", "Muslim Para", 124, 120, 110, 570, 570], [106, "Chatter Mia", "Muslim Para", 124, 2019, 0, 2019, 0], [107, "Faizul Mia (Kasem)", "Muslim Para", 129, 991, 0, 991, 0], [108, "Goffor Mia(mochlem)", "Muslim Para", 129, 5087, 0, 5087, 5082], [109, "Siraj Mia (Kasem)", "Muslim Para", 129, 14656, 1500, 18001, 16316], [110, "Jiarul Mia (Kasem)", "Muslim Para", 129, 258, 0, 287, 187], [111, "Romjan Mia", "Muslim Para", 130, 1829, 500, 3117, 2448], [112, "Jahingir Mia", "Muslim Para", 130, 566, 200, 4336, 3741], [113, "Ebadul Mia", "Muslim Para", 131, 150, 150, 0, 0], [114, "Saiful Mia (Mujibur)", "Muslim Para", 131, 395, 200, 395, 991], [115, "Rosul Mia mena", "Muslim Para", 131, 60, 60, 60, 0], [116, "Rafik Mia (Rajabali)", "Muslim Para", 131, 160, 0, 160, 0], [116, "Parimal Khan", "Khete Para", 135, 44111, 20000, 57020, 68185], [117, "Ranjit Khan", "Khete Para", 140, 4426, 400, 0, 0], [118, "Subhas Khan", "Khete Para", 141, 950, 950, 2021, 0], [119, "Haider Bokso", "Khete Para", 142, 13899, 2000, 11899, 9899], [120, "Kanai Bapari", "Khete Para", 0, 0, 0, 6407, 6500], [121, "Jalauddin Mia", "Khete Para", 143, 157317, 10000, 174485, 201292], [122, "Lotu Mia", "Khete Para", 147, 5910, 2000, 6260, 5300], [123, "Ahead (Borobhai)", "Khete Para", 147, 829, 500, 861, 660], [124, "Foku Mia (Lotu]", "Khete Para", 148, 16299, 3000, 14102, 16450], [125, "Kutubuddin Mia", "Khete Para", 148, 5337, 1500, 4772, 5762], [126, "Amir Mia", "Khete Para", 149, 3523, 0, 3433, 3428], [127, "Israfil Mia", "Khete Para", 150, 1194, 0, 1194, 394], [128, "Jakir Mia", "Khete Para", 151, 10690, 2000, 16626, 18297], [129, "Mijanur Mia (Khete)", "Khete Para", 152, 1450, 0, 1450, 1450], [130, "Rijabul Mia", "Khete Para", 153, 658, 200, 1370, 5682], [131, "Alauddin Mia", "Khete Para", 154, 1465, 700, 265, 0], [132, "Ajij Mia", "Khete Para", 154, 1960, 500, 1460, 1460], [132, "Monoranjan Das", "Das Para", 155, 7497, 1500, 8009, 7119], [133, "Gopal Das", "Das Para", 156, 11209, 2000, 11589, 20977], [134, "Basudev Das", "Das Para", 157, 2523, 0, 2523, 3205], [135, "Jaydev Das", "Das Para", 158, 2260, 1000, 3800, 0], [136, "Alok Das", "Das Para", 159, 3593, 1000, 3183, 2303], [137, "Mangal Das", "Das Para", 160, 913, 200, 713, 713], [138, "Nishu das", "Das Para", 0, 480, 200, 260, 260], [139, "Mithun Das", "Das Para", 161, 4770, 200, 4570, 4370], [140, "Dilip Das", "Das Para", 161, 3589, 500, 3399, 4079], [141, "Pocha Das", "Das Para", 162, 1390, 500, 660, 1160], [142, "Tarun Das", "Das Para", 163, 5352, 1500, 4739, 4027], [143, "Bishu Das (Tumpa)", "Das Para", 164, 2866, 0, 2786, 3045], [144, "Krishna panda Das (bom)", "Das Para", 165, 778, 200, 578, 574], [145, "Beeshe Das", "Das Para", 165, 3799, 500, 3299, 3299], [146, "Kangla Das", "Das Para", 166, 1130, 0, 1130, 1630], [147, "Kali Das", "Das Para", 166, 0, 0, 0, 100], [147, "Ajay Debnath", "Kuli Para", 168, 1443, 0, 1443, 1443], [148, "Kajal De", "Kuli Para", 168, 378, 0, 378, 374], [149, "Dipak De", "Kuli Para", 168, 498, 100, 398, 398], [150, "Bablu Debnath", "Kuli Para", 168, 989, 0, 989, 2980], [151, "Robi Debnath", "Kuli Para", 169, 269, 200, 69, 69], [152, "Subol Debnath", "Kuli Para", 169, 1325, 500, 825, 325], [153, "Bishu Debnath", "Kuli Para", 169, 20, 100, 450, 0], [154, "Paritosh Debnath", "Kuli Para", 170, 4203, 0, 4203, 3203], [155, "Bishu Debnath", "Kuli Para", 170, 505, 200, 315, 1215], [156, "Tapan Orang", "Kuli Para", 171, 520, 0, 520, 520], [157, "Samar (Durga) Orang", "Kuli Para", 171, 9912, 0, 11193, 11862], [158, "Amar Orang", "Kuli Para", 172, 1300, 0, 1300, 1300], [159, "Nakul Orang", "Kuli Para", 172, 2056, 0, 2056, 2056], [160, "Khagen Orang", "Kuli Para", 173, 90, 0, 300, 1700], [161, "Suren Oramg", "Kuli Para", 175, 5090, 4700, 930, 1020], [162, "Bimal Orang", "Kuli Para", 176, 1055, 0, 1055, 1055], [163, "Nirmal De", "Kuli Para", 177, 1070, 0, 1070, 1070], [164, "Ganesh De", "Kuli Para", 177, 463, 0, 463, 463], [165, "Nitai De", "Kuli Para", 177, 350, 0, 350, 350], [166, "Dipankar sarkar", "Kuli Para", 0, 222, 220, 800, 1391], [167, "Ratan De", "Kuli Para", 177, 205, 0, 205, 0], [167, "Santanu SinghaRoy", "Singharoy Para", 178, 3852, 3826, 0, 1980], [168, "Tapan SinghaRoy", "Singharoy Para", 179, 6963, 2500, 6585, 9862], [169, "Ganesh Singharoy", "Singharoy Para", 180, 2803, 1500, 4465, 7288], [170, "Hiren Debnath", "Singharoy Para", 0, 0, 0, 1900, 1750], [171, "Subir singha ray", "Singharoy Para", 0, 0, 0, 0, 1791], [172, "Bapi dhar/ Goutam Dhar", "Singharoy Para", 0, 0, 0, 360, 160], [173, "Siddhartha SinghaRoy", "Singharoy Para", 181, 4582, 500, 4082, 5084], [174, "Sushil Das", "Singharoy Para", 182, 8270, 4000, 8834, 5409], [175, "Ranjit Debnath", "Singharoy Para", 183, 2438, 500, 3270, 6189], [176, "Guru Mondal", "Singharoy Para", 184, 1653, 500, 1157, 0], [177, "Kanu Biswas", "Singharoy Para", 185, 344, 200, 1298, 834], [178, "Tarun Biswas", "Singharoy Para", 185, 445, 0, 210, 0], [179, "Goutam Monda (Gopal)", "Singharoy Para", 186, 350, 0, 3776, 3400], [180, "Gopa Mondal", "Singharoy Para", 0, 0, 0, 3810, 0], [181, "Kinkor Mondal", "Singharoy Para", 187, 10778, 5000, 7760, 6495], [182, "Sanjay Mondal (Kinkor)", "Singharoy Para", 188, 2170, 2170, 7930, 9590], [183, "Bhim Mondal", "Singharoy Para", 189, 473, 437, 1675, 1000], [184, "Fatik Biswas", "Malpara", 0, 0, 0, 0, 3676], [184, "Kenya Mondal", "Singharoy Para", 189, 3293, 0, 3293, 3293], [185, "Bubai lodh", "Singharoy Para", 189, 3293, 0, 3293, 4092], [186, "Robin Biswas", "Singharoy Para", 189, 408, 100, 308, 308], [187, "Rajkumar Roy", "Roy Para", 190, 595, 0, 595, 1160], [188, "Rakhi Roy", "Roy Para", 190, 4579, 800, 4038, 3734], [189, "Nobokumar roy", "Roy Para", 191, 28924, 5000, 41207, 36748], [190, "Prasenjit roy", "Roy Para", 192, 4965, 500, 4465, 3465], [191, "Chhotu Roy", "Roy Para", 193, 145, 0, 0, 135], [192, "Pocha Roy", "Roy Para", 194, 8397, 500, 6761, 6699], [193, "Dasarath Roy", "Roy Para", 195, 307, 100, 237, 0], [194, "Sribas Roy", "Roy Para", 195, 145, 0, 138, 0], [195, "Bhagiroth Roy", "Roy Para", 196, 0, 0, 0, 3465], [196, "Guru Roy", "Roy Para", 196, 21223, 3000, 24148, 23644], [197, "Brindabon Roy", "Roy Para", 197, 614, 400, 986, 485], [198, "Pachu Roy", "Roy Para", 198, 13026, 8000, 11709, 8831], [199, "Swapan Roy", "Roy Para", 199, 855, 400, 818, 818], [200, "Sanjay Roy (Talapada)", "Roy Para", 200, 380, 100, 990, 1530], [201, "Dhananjoy Roy", "Roy Para", 201, 3373, 500, 2873, 2673], [202, "Samir Roy", "Roy Para", 202, 31739, 5000, 38056, 45489], [203, "Bidhan Roy", "Roy Para", 203, 3530, 1000, 38733, 2875], [204, "Shital Roy", "Roy Para", 203, 125, 100, 0, 0], [205, "Bhanudeb Roy", "Roy Para", 203, 80, 100, 0, 0], [206, "Natu Roy", "Roy Para", 204, 2850, 2800, 1710, 1077], [207, "Mrityunjay Roy", "Roy Para", 204, 400, 400, 873, 1613], [208, "Horen Sarkar", "Roy Para", 205, 4576, 1000, 6396, 6396], [209, "Debaprasad Mondal", "Roy Para", 206, 1865, 1000, 5876, 11297], [210, "Monindra Bairagi", "Roy Para", 207, 820, 0, 820, 1140], [211, "Mongal Sarkar", "Roy Para", 207, 2930, 0, 0, 0], [212, "Nepal Sarkar", "Roy Para", 208, 2690, 500, 2190, 0], [213, "Nitai Sarkar", "Roy Para", 208, 3746, 2000, 1776, 0], [214, "Kinu Biswas", "Roy Para", 209, 1084, 0, 1048, 1048], [215, "Subhas Biswas", "Roy Para", 209, 260, 100, 160, 160], [216, "Gopal Mondal", "Roy Para", 209, 609, 400, 359, 359], [217, "Haradhan Das", "Roy Para", 209, 248, 0, 285, 148], [218, "Ramprasad Das", "Roy Para", 210, 1137, 0, 1147, 1952], [219, "Paban Das", "Roy Para", 210, 0, 0, 0, 0], [220, "Kirtibas Mondal", "Roy Para", 211, 2735, 2000, 3535, 9254], [221, "Animesh (Taranna) Tapadar", "Roy Para", 212, 520, 500, 70, 4320], [222, "Dilip Das", "Roy Para", 213, 1395, 0, 1395, 3434], [223, "Pradip Das", "Roy Para", 213, 809, 0, 809, 809], [224, "Dipak Sarkar", "Roy Para", 214, 3834, 0, 3834, 3834], [225, "Tarani Sarkar", "Roy Para", 215, 1170, 0, 1170, 1170], [226, "Laxman Baidya", "Roy Para", 216, 829, 0, 829, 829], [227, "Bhambol Santra", "Roy Para", 217, 6590, 3000, 4350, 3470], [228, "Natik Santra", "Roy Para", 217, 836, 500, 1500, 1000], [229, "Amar Santra", "Roy Para", 218, 1907, 1500, 407, 627], [230, "Pradip Khamare", "Roy Para", 218, 961, 0, 961, 961], [231, "Chiranjit Santra", "Roy Para", 219, 395, 0, 395, 195], [232, "Dulal Santra", "Roy Para", 219, 2645, 1000, 1645, 1645], [233, "Bhokto Santra", "Roy Para", 220, 9307, 1000, 8437, 10689], [234, "Dipu Santra", "Roy Para", 221, 1092, 200, 1767, 1267], [235, "Subhas Santra", "Roy Para", 0, 0, 0, 1430, 1170], [236, "Rabin Santra", "Roy Para", 221, 612, 0, 652, 652], [237, "Joydeb Santra", "Roy Para", 222, 6025, 3000, 8870, 6911], [238, "Ashok Santra", "Roy Para", 223, 717, 300, 1837, 3972], [239, "Uttam Santra", "Roy Para", 224, 2178, 800, 2628, 2628], [240, "Narad Santra", "Roy Para", 224, 4328, 0, 5376, 5476], [241, "Jolo Satra", "Roy Para", 225, 175, 0, 0, 0], [242, "Pintu satra", "Roy Para", 225, 363, 0, 363, 363], [243, "Atul Gayen", "Roy Para", 226, 1628, 0, 1628, 1628], [244, "Nepal satra", "Roy Para", 226, 848, 0, 848, 848], [245, "Tapash Satra (Anil)", "Roy Para", 226, 376, 0, 376, 376], [246, "Tapan Satra", "Roy Para", 226, 1297, 100, 1197, 1280], [247, "Bijoy Satra", "Roy Para", 227, 330, 0, 330, 330], [248, "Gopal Boidya", "Roy Para", 227, 715, 150, 565, 565], [249, "Sondha Satra", "Roy Para", 227, 663, 0, 663, 563], [250, "Bishtupodo Satra( kenaram)", "Roy Para", 227, 190, 100, 90, 100], [251, "Pagol Satra", "Roy Para", 228, 120, 0, 120, 120], [252, "Sonatan Satra", "Roy Para", 228, 1250, 0, 1250, 1250], [253, "Srebash  Boiragi", "Roy Para", 228, 373, 0, 373, 373], [254, "Rupa Satra", "Roy Para", 228, 935, 0, 935, 935], [255, "Becharam Boiragi", "Roy Para", 229, 2681, 0, 2681, 2681], [256, "Sibupodo Bairagi", "Roy Para", 229, 273, 0, 273, 273], [257, "Horen Boidya", "Roy Para", 229, 1899, 0, 1899, 1899], [258, "Dhiren Boidya", "Roy Para", 230, 1485, 0, 1485, 1545], [259, "Sunil Satra", "Roy Para", 230, 415, 100, 315, 315], [260, "Kishore Bairagi", "Roy Para", 230, 590, 200, 390, 390], [261, "Bikash Satra", "Roy Para", 231, 1140, 1140, 150, 435], [262, "Sukho santra", "Roy Para", 0, 0, 0, 170, 230], [263, "Krishna santra", "Roy Para", 0, 0, 0, 1395, 0], [264, "Dasarath satra", "Roy Para", 231, 618, 0, 618, 618], [265, "Bimol Satra", "Roy Para", 232, 280, 0, 310, 0], [266, "Nabakumar Mondal", "Malpara", 250, 910, 400, 767, 67], [267, "Panchanan mondal", "Malpara", 250, 215, 50, 631, 96], [268, "Tapan Mondal", "Malpara", 251, 859, 500, 2051, 1581], [269, "Kanai Mondal", "Malpara", 251, 1161, 1161, 3270, 3182], [270, "Kartik Mondal", "Malpara", 252, 355, 300, 1610, 4023], [271, "Sujit Mondal", "Malpara", 253, 6297, 2000, 5506, 5271], [272, "Mihir Mondal", "Malpara", 254, 12064, 6000, 8026, 8230], [273, "Anil Mondal", "Malpara", 255, 4432, 1000, 6882, 10072], [274, "Jogai Mondal", "Malpara", 256, 855, 500, 2926, 3095], [275, "Sonashi Mondal", "Malpara", 256, 6231, 0, 6231, 6231], [276, "Bhogirath Roy", "Malpara", 256, 1921, 1400, 3751, 1389], [277, "Rupa Mondal", "Malpara", 256, 844, 400, 444, 286], [278, "Bapi Mondal/ Rupo", "Malpara", 0, 0, 0, 0, 3748], [278, "Debobroto Mondal (Bonshi)", "Malpara", 256, 1694, 0, 1694, 1704], [279, "Kuron Mondal ( Mohonto)", "Malpara", 257, 5190, 2500, 2110, 3468], [280, "Arun Mondal (Mohonto)", "Malpara", 257, 991, 500, 2923, 3960], [281, "Tapan Mondal ( Nishapoti)", "Malpara", 258, 5537, 2000, 4927, 6662], [282, "Kumar Mondal ( Nishapoti)", "Malpara", 258, 480, 300, 1370, 870], [283, "Kalisadhan Mondal", "Malpara", 259, 1708, 1000, 3477, 2477], [284, "Hari Mondal (Tarapodo)", "Malpara", 259, 4670, 1000, 7510, 9545], [285, "Modon Mondal ( Nantu)", "Malpara", 259, 853, 853, 0, 0], [286, "Sudeb Mondal ( Jamai)", "Malpara", 260, 6594, 1000, 18375, 21407], [287, "Chottu mondal( Nitai)", "Malpara", 261, 450, 300, 150, 0], [288, "Aurobindo mondal(sukchad)", "Malpara", 261, 1470, 1450, 1414, 3530], [289, "Psnchuram Mondal", "Malpara", 0, 0, 0, 0, 435], [289, "Sudanshu Mondal", "Malpara", 261, 306, 0, 306, 316], [290, "Astopodo Ray", "Malpara", 262, 9315, 4000, 7163, 6163], [291, "Nabokumar Mondal ( Lalmohon)", "Malpara", 264, 658, 500, 4252, 806], [292, "Ashok mondal ( Lalmohon)", "Malpara", 264, 2242, 0, 2242, 8376], [293, "Binoy Mondal", "Malpara", 265, 2560, 1000, 2793, 2663], [294, "Bikas Mondal", "Malpara", 265, 1522, 1000, 1047, 1457], [295, "Dudhkumar Mondal", "Malpara", 266, 1395, 500, 1760, 1084], [296, "Ajoy Mondal", "Malpara", 267, 31938, 500, 26000, 24566], [297, "Nabakumar Mondal ( Hajari)", "Malpara", 267, 11049, 5000, 18065, 16568], [298, "Tanmoy Modal", "Malpara", 268, 6970, 1000, 0, 0], [299, "Monoronjan Mondal( Ram)", "Malpara", 268, 1516, 500, 1096, 596], [300, "Mongal Mondal ( Santipodo)", "Malpara", 269, 695, 100, 2395, 1115], [301, "Santipodo Mondal", "Malpara", 269, 7125, 1000, 7636, 6657], [302, "Monikanto Mondal", "Malpara", 270, 13872, 5000, 11981, 11957], [303, "Rampodo Mondal", "Malpara", 271, 560, 500, 60, 952], [304, "Sonaton Mondal ( Nirapodo)", "Malpara", 271, 345, 200, 565, 9892], [305, "Sadhan mondal", "Malpara", 271, 1308, 500, 5671, 17402], [306, "Profullo Mondal ( Sadhan)", "Malpara", 272, 1985, 500, 2085, 12886], [307, "Gopal Mondal", "Malpara", 272, 1170, 400, 1592, 2245], [308, "Ananda Mondal", "Malpara", 273, 1945, 500, 6435, 6647], [309, "Hempodo Mondal", "Malpara", 273, 875, 100, 3180, 3320], [310, "Madhab mondal", "Malpara", 273, 622, 250, 5015, 4330], [311, "Tapas mondal", "Malpara", 274, 2078, 400, 1609, 1161], [312, "Poran mondal", "Malpara", 275, 852, 800, 0, 290], [313, "Sonatan Mondal ( nirapode /Ram)", "Malpara", 0, 0, 0, 1680, 165], [314, "Bhimpodo Shibani (Mondal)", "Malpara", 277, 3280, 3000, 989, 1645], [315, "Basudeb Biswas", "Malpara", 278, 1073, 300, 773, 773], [316, "Chinibas Sarkar", "Malpara", 279, 1419, 500, 959, 1399], [317, "Shampodo ( Sasthitola)", "Malpara", 279, 55, 0, 0, 55], [318, "Bolai Sarkar", "Malpara", 280, 4150, 2000, 4190, 5655], [319, "Sonaton Sarkar", "Malpara", 281, 1614, 300, 1335, 1355], [320, "Sanjoy Sarkar ( Kanai)", "Malpara", 281, 11760, 500, 370, 370], [321, "Sristhidhor Sarkar", "Malpara", 282, 53, 0, 0, 0], [322, "Gonesh Sarkar", "Malpara", 282, 11760, 6000, 7875, 9230], [323, "Prabin Sarkar", "Malpara", 283, 540, 200, 1385, 385], [324, "Narayan Sarkar ( Sasthitola)", "Malpara", 282, 7193, 1000, 6835, 11983], [325, "Badal Sarkar", "Malpara", 284, 50, 50, 100, 0], [326, "Rabin Sarkar", "Malpara", 285, 5746, 2500, 6335, 7818], [327, "Ananda Sarkar", "Malpara", 286, 212, 0, 2200, 2653], [328, "Buddhiswar Mondal", "Malpara", 286, 1892, 0, 1892, 2635], [329, "Chintamoni Mondal", "Malpara", 287, 11859, 2000, 16110, 17894], [330, "Gonesh Sorkar ( Avijit)", "Malpara", 288, 638, 0, 1093, 1083], [331, "Horidas Mondal ( Gosai)", "Malpara", 288, 3989, 1500, 3909, 6149], [332, "Sukanto Mondal", "Malpara", 289, 3716, 3600, 3930, 7520], [333, "Jona Mondal", "Malpara", 290, 3615, 2500, 1980, 3796], [334, "Bolai mondal", "Malpara", 291, 4954, 0, 4958, 5064], [335, "Kanai Mondal", "Malpara", 291, 1717, 0, 1717, 2117], [336, "Sukdeb Mondal", "Malpara", 292, 1012, 400, 612, 612], [337, "Prosenjit Mondal", "Malpara", 292, 4480, 1800, 3695, 5233], [338, "Sujit Mondal / Sukdeb", "Malpara", 293, 12692, 9000, 12693, 12121], [339, "Hari Mondal", "Malpara", 293, 3368, 2000, 1418, 1521], [340, "Jugol Mondal", "Malpara", 294, 3970, 2000, 1970, 2115], [341, "Sandip Mondal ( Natobar)", "Malpara", 295, 6495, 2000, 4595, 4095], [342, "Premananda Taposi", "Malpara", 296, 5467, 1000, 5242, 6188], [343, "Sudipto Taposi", "Malpara", 296, 19585, 2000, 17858, 17085], [344, "Santipodo Mondal Polan", "Malpara", 297, 75, 100, 440, 950], [345, "Polan Mondal", "Malpara", 297, 1190, 500, 21067, 19637], [346, "Joyonto Mondal (Dukhiram)", "Malpara", 298, 1211, 0, 1211, 1211], [347, "Animesh Mondal Dukhiram", "Malpara", 298, 3163, 1000, 4005, 3643], [348, "Shyamal Mondal ( Dukhiram)", "Malpara", 298, 50, 0, 50, 50], [349, "Sadhan Mondal (Subrata)", "Malpara", 299, 6569, 2000, 5599, 5829], [350, "Subhas Mandal ( Sadhan", "Malpara", 299, 1240, 1000, 1185, 1185], [351, "Santan Mandal", "Malpara", 300, 1260, 1000, 7676, 5667], [352, "Madhu mandal", "Malpara", 301, 3290, 3000, 0, 8510], [353, "Asto Mondal", "Malpara", 0, 0, 0, 750, 50], [354, "Adidtya mandal", "Malpara", 301, 30, 0, 0, 0], [355, "Madan Mandan", "Malpara", 302, 0, 0, 0, 0], [356, "Dipankar Mandal", "Malpara", 302, 4785, 2000, 5886, 7891], [357, "Ananda mandal Gour", "Malpara", 303, 13647, 5000, 16896, 24031], [358, "Nabakumar Mandal", "Malpara", 303, 225, 200, 185, 0], [359, "Kush Mandal gour", "Malpara", 304, 5640, 1000, 8161, 5699], [360, "Premananda mandak", "Malpara", 305, 3310, 2000, 1510, 1020], [361, "Biswanath mandal", "Malpara", 306, 4730, 2000, 13330, 8890], [362, "Bhagirath mandal", "Malpara", 307, 6375, 1000, 3625, 21190], [363, "Rashbihari mandal", "Malpara", 308, 849, 500, 7329, 1232], [364, "Basudeb mandal", "Malpara", 308, 4989, 1000, 8429, 7135], [365, "Gouranga mandal nityananda", "Malpara", 309, 535, 400, 135, 76], [366, "Nityananda Mandal gouranga", "Malpara", 310, 5437, 4000, 2663, 3663], [367, "Paritosh mandal nityananda", "Malpara", 311, 750, 500, 250, 0], [368, "Haran mandal", "Malpara", 312, 654, 500, 352, 932], [369, "Subhankar mandal haran", "Malpara", 312, 7587, 500, 5701, 6102], [370, "Prabhakar mandal haran", "Malpara", 313, 9030, 8000, 8313, 0], [371, "Samir / jatin mandal", "Malpara", 314, 2583, 2500, 4691, 2801], [372, "Nakul mandal", "Malpara", 314, 3191, 500, 2000, 2092], [373, "Uttom mandal ( Laxmi)", "Malpara", 315, 5694, 4000, 3762, 8767], [374, "Premananda Golder", "Malpara", 314, 195, 0, 555, 60], [375, "Pradip Mandal", "Malpara", 316, 2219, 0, 2219, 719], [376, "Janardhan Mandal laxmi", "Malpara", 317, 160, 150, 2936, 9371], [377, "Tarak mandal", "Malpara", 318, 192, 50, 142, 300], [378, "Bhaskar mandal", "Malpara", 318, 16755, 0, 49229, 56465], [379, "Napal mandal", "Malpara", 319, 1000, 1000, 260, 3790], [380, "Chintamoni Golder", "Malpara", 319, 2500, 1000, 1285, 2885], [381, "Sunil Golder", "Malpara", 320, 7427, 2000, 507, 0], [382, "Subhendhu Golder", "Malpara", 320, 7999, 2000, 11743, 11350], [383, "Tarun roy", "Malpara", 321, 5095, 2000, 4910, 11460], [384, "Barun roy", "Malpara", 321, 7719, 500, 8072, 11010], [385, "Atmaram Mandal", "Malpara", 322, 375, 0, 830, 0], [386, "Ujjal Roy", "Malpara", 322, 1767, 500, 3473, 3683], [387, "Kumaresh Golder", "Malpara", 323, 740, 600, 140, 1275], [388, "Ramprasad mondal", "Malpara", 324, 745, 400, 840, 159], [389, "Ananda Mondal Ramprasad", "Malpara", 0, 100, 100, 0, 0], [390, "Santosh Mandal pradip", "Malpara", 324, 4372, 0, 4334, 0], [391, "Utpal mandal santosh", "Malpara", 324, 3473, 3000, 473, 273], [392, "Sumon mandal (ajay fish)", "Malpara", 325, 711, 500, 961, 1241], [393, "Bishnupada mandal", "Malpara", 325, 825, 0, 3155, 2655], [394, "Boloram mandal", "Malpara", 325, 3281, 0, 3281, 3281], [395, "Chandan golder", "Malpara", 326, 730, 730, 2790, 3200], [396, "Sanjit mandal", "Malpara", 326, 2015, 800, 1315, 3475], [397, "Swapan mandal biswanath", "Malpara", 327, 30035, 10000, 11038, 29446], [398, "Nityananda Gokul", "Malpara", 329, 4396, 3000, 6753, 6204], [399, "Gouranga mandal", "Malpara", 330, 3958, 1000, 2125, 2825], [400, "Sudham mandal", "Malpara", 331, 2485, 500, 3192, 3752], [401, "Krishnapada mandal", "Malpara", 331, 6390, 2000, 3385, 9125], [402, "Subrata mandal", "Malpara", 332, 3993, 500, 6330, 8770], [403, "Ananta Golder", "Malpara", 333, 10887, 4000, 9278, 6967], [404, "Nanda Mandal", "Malpara", 334, 272, 0, 272, 0], [405, "Joydeb Sarker", "Malpara", 334, 9623, 0, 7056, 7109], [406, "Sudev sarkar /joydeb", "Malpara", 335, 1865, 1000, 865, 1755], [407, "Saroj golder", "Malpara", 336, 1211, 500, 711, 311], [408, "Manoj golder", "Malpara", 336, 1017, 200, 817, 817], [409, "Soumitra goldar", "Malpara", 336, 7097, 1000, 4954, 7933], [410, "Sourav Goldar", "Malpara", 336, 6025, 0, 4915, 7567], [411, "Ananda Golder", "Malpara", 0, 1300, 300, 3279, 2640], [412, "Jantu Mandal", "Malpara", 337, 3070, 200, 1546, 3178], [413, "Bapan mandal kartik", "Malpara", 337, 2590, 700, 3782, 3360], [414, "sanjeeb sana", "Malpara", 337, 1667, 0, 1667, 0], [415, "Gadadhar golder", "Malpara", 338, 440, 400, 140, 267], [416, "Narayan bachar", "Malpara", 338, 10480, 6000, 10066, 5266], [417, "Bobotosh mondal", "Malpara", 338, 1714, 500, 2580, 1336], [418, "Kartik sarkar", "Malpara", 339, 5379, 1000, 4379, 0], [419, "Rajib mondal", "Malpara", 339, 8878, 5000, 4618, 9463], [420, "Bablu mondal mukundo", "Malpara", 339, 210, 200, 520, 895], [421, "Arjun mandal Mulundo", "Malpara", 339, 400, 100, 300, 390], [422, "Baidyanath sarkar", "Malpara", 340, 1993, 1500, 998, 1138], [423, "Panchanan goldar", "Malpara", 340, 1000, 500, 500, 0], [424, "Laxmikanta sarkar", "Malpara", 340, 133, 130, 806, 0], [425, "Debkumar Sarder", "Malpara", 341, 4595, 2000, 3430, 3430], [426, "Ajit roy", "Malpara", 341, 110, 0, 110, 0], [427, "Nishikanta mandal", "Malpara", 342, 3979, 1000, 6688, 6688], [428, "Paritosh mondal chainanta", "Malpara", 342, 975, 500, 1416, 1116], [429, "Dinibojdhu mandal", "Malpara", 343, 280, 200, 285, 0], [430, "Ananta Mandal", "Malpara", 0, 0, 0, 100, 140], [431, "Sambhu mandal", "Malpara", 343, 100, 0, 100, 0], [432, "Debasish Golder", "Dakshin Dutta Para", 346, 1610, 0, 1870, 5465], [433, "Dinobondhu ray", "Dakshin Dutta Para", 346, 1723, 0, 1723, 1723], [434, "Kenaram mandal", "Dakshin Dutta Para", 347, 3570, 0, 3570, 3570], [435, "Shiben Sarder", "Dakshin Dutta Para", 347, 4015, 1000, 3516, 2596], [436, "Chanchal Roy", "Dakshin Dutta Para", 0, 0, 0, 120, 0], [437, "Nilanjan Golder", "Dakshin Dutta Para", 347, 1370, 0, 1370, 1070], [438, "Sayan Roy", "Dakshin Dutta Para", 348, 70, 100, 0, 0], [439, "Asto sarder", "Dakshin Dutta Para", 348, 386, 0, 385, 386], [440, "Shyam mandal", "Dakshin Dutta Para", 349, 1330, 1300, 0, 0], [441, "Nilkamal Gain", "Dakshin Dutta Para", 348, 0, 0, 200, 230], [442, "Biswajit sarkar", "Dakshin Dutta Para", 349, 36, 0, 0, 0], [443, "Uttom karmakar gour", "Dakshin Dutta Para", 349, 760, 0, 760, 760], [444, "Sukumar mandal", "Baikara", 350, 2280, 1000, 2165, 2515], [445, "Oli mia", "Baikara", 350, 3200, 1000, 2200, 1200], [446, "Momin mia", "Baikara", 350, 6782, 0, 6782, 4782], [447, "Akkas mia", "Baikara", 350, 3815, 0, 4195, 4355], [448, "Ayush Ali", "Baikara", 351, 440, 0, 440, 440], [449, "Rasid mia", "Baikara", 351, 650, 0, 650, 650], [450, "Jiyarul mia", "Baikara", 351, 2517, 0, 2517, 1517], [451, "Moidul mia", "Baikara", 351, 385, 200, 355, 460], [452, "Hapijul kader", "Baikara", 0, 0, 0, 415, 415], [453, "Haran mia", "Baikara", 352, 10099, 3000, 14359, 8230], [454, "Sanjay Bijlee", "Baikara", 352, 783, 0, 783, 0], [455, "Hujurali", "Baikara", 353, 1317, 500, 5283, 2783], [456, "Saburali", "Baikara", 353, 990, 0, 990, 990], [457, "Rasunali", "Baikara", 0, 0, 0, 280, 0], [458, "Tapan baidya", "Baikara", 354, 767, 0, 567, 567], [459, "Bhagirath baidya", "Baikara", 354, 1010, 500, 510, 786], [460, "Kamal mia", "Baikara", 355, 1197, 500, 1503, 0], [461, "Abhukalam Mia", "Baikara", 0, 0, 0, 0, 52], [461, "Halim mia", "Baikara", 356, 3297, 500, 388, 1708], [462, "Mohashin mia", "Baikara", 356, 1039, 0, 1039, 1039], [463, "Julffikar mia", "Baikara", 356, 985, 0, 985, 0], [464, "Ismile Mia", "Baikara", 356, 300, 0, 300, 0], [465, "Abukalam mia", "Nonaghata", 359, 37849, 15000, 45078, 4234], [466, "Rijabul mandal", "Nonaghata", 360, 565, 0, 3125, 2235], [467, "Rabiul mandal", "Nonaghata", 361, 21716, 2000, 19675, 18543], [468, "Aftarul mandal", "Nonaghata", 362, 42407, 0, 45106, 53439], [469, "Mijanur mia", "Nonaghata", 363, 7405, 1000, 21339, 23338], [470, "Abdul momin bagh", "Nonaghata", 363, 2885, 500, 1285, 1285], [471, "Rulo amin mondal", "Nonaghata", 364, 1455, 0, 1455, 1455], [472, "Hasan mandal", "Nonaghata", 364, 5209, 4000, 11774, 9046], [473, "Hosen mandal", "Nonaghata", 364, 950, 0, 950, 950], [474, "Alam mandal", "Nonaghata", 365, 8915, 0, 9195, 9295], [475, "Khalid mandal", "Nonaghata", 365, 2216, 0, 2216, 2781], [476, "Moni mandal", "Nonaghata", 365, 360, 0, 360, 368], [477, "Hanif mandal (khalid)", "Nonaghata", 365, 14839, 0, 14839, 2781], [478, "Gahar mandal", "Nonaghata", 366, 2015, 2000, 2858, 2434], [479, "Billal mandal", "Nonaghata", 367, 10896, 0, 15631, 9395], [480, "Momim mandal aftarul", "Nonaghata", 366, 1355, 0, 1355, 0], [481, "Sirajul mandal", "Nonaghata", 367, 4325, 500, 3825, 3825], [482, "Sintu mandal", "Nonaghata", 368, 395, 300, 195, 195], [483, "Nasir mandal", "Nonaghata", 369, 14090, 1000, 18030, 17800], [484, "Sajid Mondal", "Nonaghata", 0, 0, 0, 1510, 510], [485, "Samim Mandal", "Nonaghata", 368, 0, 0, 3438, 2434], [486, "Rafik mia atar", "Nonaghata", 370, 2430, 1000, 2940, 2450], [487, "Kamal sahaji", "Nonaghata", 371, 67000, 10000, 83082, 98140], [488, "Jamsher mia", "Nonaghata", 373, 1525, 0, 1525, 1525], [489, "Gopal suttradhar", "Nonaghata", 373, 6890, 0, 6890, 4890], [490, "Sadhan Biswas", "Nonaghata", 0, 0, 0, 6409, 4409], [491, "Bhushan bain", "Nonaghata", 374, 9040, 2500, 6540, 5940], [492, "Nilratan Mandal", "Nonaghata", 375, 10445, 5000, 12009, 2009], [493, "Sumit Mandal", "Nonaghata", 375, 5145, 2000, 4615, 3351], [494, "Arobindo mondal suchitra", "Nonaghata", 375, 80, 0, 0, 0], [495, "Sukumar sarkar", "Nonaghata", 375, 24, 50, 0, 0], [496, "Ajit tarafdar", "Nonaghata", 376, 5002, 2000, 3092, 2812], [497, "Niranjan tarafdar", "Nonaghata", 377, 3375, 0, 3375, 3375], [498, "Bhadrha kumar sana", "Nonaghata", 377, 362, 300, 355, 155], [499, "Dipak mandal", "Nonaghata", 377, 495, 0, 496, 495], [500, "Kamal pal", "Nonaghata", 378, 410, 0, 0, 410], [501, "Nimai baidya", "Nonaghata", 378, 200, 200, 60, 60], [502, "Bapi bhowmik", "Nonaghata", 378, 1386, 0, 1385, 0], [503, "Sushanta mandal", "Nonaghata", 378, 6952, 1000, 6842, 6842], [504, "Goutam biswas", "Nonaghata", 0, 3730, 0, 3730, 730], [505, "Mohashin mia", "Nonaghata", 379, 580, 0, 580, 0], [506, "Motiar rahaman nasir", "Nonaghata", 0, 1115, 0, 0, 360], [507, "Anil mandal manu", "Nonaghata", 379, 490, 490, 0, 490], [508, "Biru mandal santosh", "Nonaghata", 379, 296, 0, 0, 296], [509, "Bimal mandal", "Nonaghata", 380, 3835, 0, 3900, 0], [510, "Sibu pali", "Nonaghata", 0, 0, 0, 1365, 0], [511, "Harilal mandal", "Nonaghata", 381, 9382, 3000, 9877, 0]];
+
+  let customCycles = [
+    { id: 0, label: "Oct '26 - Feb '27", start: "2026-10-28", end: "2027-02-28" }
+  ];
+  let selectedCycleIdx = 0;
+  let showAllRows = false;
+
+  let bookAuditData = rawCompactData.map(r => ({
+    sl: r[0],
+    name: r[1],
+    para: r[2],
+    page: r[3],
+    may24: r[4],
+    coll24: r[5],
+    jan25: r[6],
+    june25: r[7],
+    cycles: [
+      { book: r[7], coll: 0 }
+    ]
+  }));
+
+  let currentAuditPara = 'ALL';
+
+  let todayTransactions = [
+    { time: "09:40 AM", cust: "Jagadish Ghosh", item: "Coragen 150ml x1", mode: "Credit Account", profit: 200, total: 1480 },
+    { time: "10:15 AM", cust: "Rafik Mia", item: "NPK 10:26:26 50kg x2", mode: "Cash", profit: 220, total: 2940 }
+  ];
+
+  let skuCatalog = [
+    { name: "IFFCO Urea 45kg", company: "IFFCO", pack: "45 kg Bag", stock: 185, buy: 242, sell: 270, cat: "Fertilizer" },
+    { name: "Gromor DAP 50kg", company: "Coromandel", pack: "50 kg Bag", stock: 90, buy: 1280, sell: 1365, cat: "Fertilizer" },
+    { name: "Gromor NPK 10:26:26", company: "Coromandel", pack: "50 kg Bag", stock: 110, buy: 1360, sell: 1470, cat: "Fertilizer" },
+    { name: "Coragen 150ml", company: "FMC", pack: "150 ml", stock: 28, buy: 1280, sell: 1480, cat: "Insecticide" },
+    { name: "Actara 100g", company: "Syngenta", pack: "100 g", stock: 65, buy: 270, sell: 350, cat: "Insecticide" },
+    { name: "Amistar Top 200ml", company: "Syngenta", pack: "200 ml", stock: 22, buy: 890, sell: 1060, cat: "Fungicide" },
+    { name: "Nominee Gold 200ml", company: "Dhanuka", pack: "200 ml", stock: 30, buy: 625, sell: 790, cat: "Herbicide" }
+  ];
+
+  function toggleShowAllRows() {
+    showAllRows = !showAllRows;
+    const btn = document.getElementById('btn-show-all');
+    btn.innerText = showAllRows ? "Showing All 515 Rows (Tap for Fast Mode)" : "Show All 515 Rows At Once";
+    btn.classList.toggle('active', showAllRows);
+    renderAuditWorksheet();
+  }
+
+  function renderCycleTabsBar() {
+    const bar = document.getElementById('cycle-tabs-bar');
+    bar.innerHTML = '';
+
+    customCycles.forEach((c, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'cycle-tab-btn' + (idx === selectedCycleIdx ? ' active' : '');
+      btn.innerText = `Cycle ${idx + 1}: ${c.label}`;
+      btn.onclick = () => {
+        selectedCycleIdx = idx;
+        renderAuditEngine();
+      };
+      bar.appendChild(btn);
+    });
+
+    document.getElementById('home-cycle-count').innerText = (3 + customCycles.length) + ' Cycles';
+    const activeLbl = customCycles[selectedCycleIdx].label;
+    document.getElementById('home-active-cycle-tag').innerText = activeLbl.toUpperCase();
+  }
+
+  function syncCalendarToLabel() {
+    const s = document.getElementById('cal-start-date').value;
+    const e = document.getElementById('cal-end-date').value;
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    if (s && e) {
+      const d1 = new Date(s);
+      const d2 = new Date(e);
+      if (!isNaN(d1) && !isNaN(d2)) {
+        const lbl = `${months[d1.getMonth()]} ${d1.getFullYear()} - ${months[d2.getMonth()]} ${d2.getFullYear()}`;
+        document.getElementById('nc-custom-label').value = lbl;
+      }
+    }
+  }
+
+  function openNewAuditCycleModal() {
+    syncCalendarToLabel();
+    document.getElementById('new-cycle-modal').classList.add('open');
+  }
+
+  function confirmAddCycleColumn() {
+    const customLbl = document.getElementById('nc-custom-label').value.trim() || `Cycle ${customCycles.length + 1}`;
+    const startVal = document.getElementById('cal-start-date').value;
+    const endVal = document.getElementById('cal-end-date').value;
+    const carryMode = document.getElementById('nc-carry-mode').value;
+
+    const prevCycleIdx = customCycles.length - 1;
+    const newCycleIdx = customCycles.length;
+
+    customCycles.push({
+      id: newCycleIdx,
+      label: customLbl,
+      start: startVal,
+      end: endVal
+    });
+
+    bookAuditData.forEach(row => {
+      const prev = row.cycles[prevCycleIdx] || { book: 0, coll: 0 };
+      const prevNet = Math.max(0, (Number(prev.book) || 0) - (Number(prev.coll) || 0));
+      row.cycles.push({
+        book: carryMode === 'carry' ? prevNet : 0,
+        coll: 0
+      });
+    });
+
+    selectedCycleIdx = newCycleIdx;
+    closeModal('new-cycle-modal');
+    saveAppData();
+    renderAuditEngine();
+    alert(`🎉 Added New Cycle Column: "${customLbl}"!`);
+  }
+
+  function renderAuditEngine() {
+    renderCycleTabsBar();
+    renderParaSummaryAndCharts();
+    renderAuditWorksheet();
+    renderHomeDashboard();
+  }
+
+  function renderParaSummaryAndCharts() {
+    const paras = [
+      "GHOSH PARA", "MUSLIM PARA", "KHETE PARA", "DAS PARA", "KULI PARA",
+      "SINGHAROY PARA", "ROY PARA", "MALPARA", "DAKSHIN DUTTA PARA", "BAIKARA", "NONAGHATA"
+    ];
+
+    const thead = document.getElementById('para-summary-thead');
+    let headHtml = `<tr>
+      <th>Village / Para</th>
+      <th>Khata</th>
+      <th style="text-align:right;">May '24 Due</th>
+      <th style="text-align:right;">Jan '25 Due</th>
+      <th style="text-align:right;">June '25 Due</th>`;
+
+    customCycles.forEach((c, cIdx) => {
+      const isSel = cIdx === selectedCycleIdx;
+      const badge = isSel ? '⭐ ' : '';
+      headHtml += `
+        <th class="cycle-divider-left" style="text-align:right; background:${isSel ? '#047857' : '#065F46'};">${badge}${c.label} Book</th>
+        <th style="text-align:right; background:#B45309;">${c.label} Recov.</th>
+        <th style="text-align:right; background:#9F1239;">${c.label} Net</th>
+      `;
+    });
+    headHtml += `</tr>`;
+    thead.innerHTML = headHtml;
+
+    const tbody = document.getElementById('para-summary-tbody');
+    const chartContainer = document.getElementById('para-chart-container');
+    tbody.innerHTML = '';
+    chartContainer.innerHTML = '';
+
+    let totCount = 0, totMay24 = 0, totJan25 = 0, totJune25 = 0;
+    let cycleTotals = customCycles.map(() => ({ book: 0, coll: 0, net: 0 }));
+    let paraTotalsForChart = [];
+
+    paras.forEach(pName => {
+      const rows = bookAuditData.filter(r => r.para.toUpperCase() === pName);
+      if (rows.length === 0) return;
+
+      const cCount = rows.length;
+      const sMay24 = rows.reduce((a, b) => a + (Number(b.may24) || 0), 0);
+      const sJan25 = rows.reduce((a, b) => a + (Number(b.jan25) || 0), 0);
+      const sJune25 = rows.reduce((a, b) => a + (Number(b.june25) || 0), 0);
+
+      totCount += cCount;
+      totMay24 += sMay24;
+      totJan25 += sJan25;
+      totJune25 += sJune25;
+
+      let rowHtml = `
+        <td><strong>${rows[0].para}</strong></td>
+        <td><span class="tag tag-green">${cCount}</span></td>
+        <td style="text-align:right;">₹${sMay24.toLocaleString('en-IN')}</td>
+        <td style="text-align:right;">₹${sJan25.toLocaleString('en-IN')}</td>
+        <td style="text-align:right; font-weight:700;">₹${sJune25.toLocaleString('en-IN')}</td>
+      `;
+
+      customCycles.forEach((c, cIdx) => {
+        const sBook = rows.reduce((a, b) => a + (Number(b.cycles[cIdx]?.book) || 0), 0);
+        const sColl = rows.reduce((a, b) => a + (Number(b.cycles[cIdx]?.coll) || 0), 0);
+        const sNet = sBook - sColl;
+
+        cycleTotals[cIdx].book += sBook;
+        cycleTotals[cIdx].coll += sColl;
+        cycleTotals[cIdx].net += sNet;
+
+        if (cIdx === selectedCycleIdx) {
+          paraTotalsForChart.push({ name: pName, due: sNet, coll: sColl, total: sBook });
+        }
+
+        rowHtml += `
+          <td class="cycle-divider-left" style="text-align:right; font-weight:800; color:var(--emerald-deepest); background:#F0FDF4;">₹${sBook.toLocaleString('en-IN')}</td>
+          <td style="text-align:right; font-weight:800; color:#B45309; background:#FFFBEB;">₹${sColl.toLocaleString('en-IN')}</td>
+          <td style="text-align:right; font-weight:900; color:var(--red-due); background:#FFF1F2;">₹${sNet.toLocaleString('en-IN')}</td>
+        `;
+      });
+
+      const tr = document.createElement('tr');
+      tr.style.cursor = 'pointer';
+      tr.onclick = () => {
+        document.querySelectorAll('#audit-para-chips .chip').forEach(c => c.classList.remove('active'));
+        currentAuditPara = rows[0].para;
+        renderAuditWorksheet();
+      };
+      tr.innerHTML = rowHtml;
+      tbody.appendChild(tr);
+    });
+
+    const totalTr = document.createElement('tr');
+    totalTr.style.background = '#D5EADB';
+    totalTr.style.fontWeight = '900';
+    let totHtml = `
+      <td>ALL 11 PARAS TOTAL</td>
+      <td>${totCount}</td>
+      <td style="text-align:right;">₹${totMay24.toLocaleString('en-IN')}</td>
+      <td style="text-align:right;">₹${totJan25.toLocaleString('en-IN')}</td>
+      <td style="text-align:right;">₹${totJune25.toLocaleString('en-IN')}</td>
+    `;
+    customCycles.forEach((c, cIdx) => {
+      totHtml += `
+        <td class="cycle-divider-left" style="text-align:right; color:var(--emerald-deepest);">₹${cycleTotals[cIdx].book.toLocaleString('en-IN')}</td>
+        <td style="text-align:right; color:#B45309;">₹${cycleTotals[cIdx].coll.toLocaleString('en-IN')}</td>
+        <td style="text-align:right; color:var(--red-due);">₹${cycleTotals[cIdx].net.toLocaleString('en-IN')}</td>
+      `;
+    });
+    totalTr.innerHTML = totHtml;
+    tbody.appendChild(totalTr);
+
+    const selCycle = customCycles[selectedCycleIdx];
+    const selTotals = cycleTotals[selectedCycleIdx];
+    const grandPct = selTotals.book > 0 ? ((selTotals.coll / selTotals.book) * 100).toFixed(1) : '0.0';
+
+    document.getElementById('chart-title-para').innerText = `📊 Para Market Lockup (${selCycle.label})`;
+    document.getElementById('chart-title-gauge').innerText = `🎯 Recovery Gauge (${selCycle.label})`;
+
+    const maxVal = Math.max(...paraTotalsForChart.map(p => p.total), 1);
+    paraTotalsForChart.forEach(p => {
+      const dueWidth = Math.min(100, (p.due / maxVal) * 100);
+      const collWidth = Math.min(100, (p.coll / maxVal) * 100);
+      const row = document.createElement('div');
+      row.className = 'bar-container';
+      row.innerHTML = `
+        <div class="bar-label">${p.name.replace(' PARA','')}</div>
+        <div class="bar-outer">
+          <div class="bar-inner-due" style="width: ${dueWidth}%"></div>
+          <div class="bar-inner-coll" style="width: ${collWidth}%"></div>
+        </div>
+        <div class="bar-val">₹${(p.due / 100000).toFixed(2)}L</div>
+      `;
+      chartContainer.appendChild(row);
+    });
+
+    document.getElementById('lbl-kpi-book').innerText = `Book (${selCycle.label})`;
+    document.getElementById('lbl-kpi-coll').innerText = `Recovered (${selCycle.label})`;
+    document.getElementById('kpi-prev').innerText = '₹' + totJune25.toLocaleString('en-IN');
+    document.getElementById('kpi-current').innerText = '₹' + selTotals.book.toLocaleString('en-IN');
+    document.getElementById('kpi-coll').innerText = '₹' + selTotals.coll.toLocaleString('en-IN');
+    document.getElementById('kpi-net').innerText = '₹' + selTotals.net.toLocaleString('en-IN');
+    document.getElementById('kpi-rate').innerText = `Recovery Rate: ${grandPct}% (${totCount} accounts)`;
+    document.getElementById('home-book-standing').innerText = '₹' + selTotals.net.toLocaleString('en-IN');
+
+    const ring = document.getElementById('svg-recovery-ring');
+    const ringPct = Math.min(100, parseFloat(grandPct));
+    ring.setAttribute('stroke-dasharray', `${ringPct}, 100`);
+    document.getElementById('svg-gauge-text').textContent = grandPct + '%';
+    document.getElementById('gauge-cycle-name').textContent = selCycle.label;
+    document.getElementById('gauge-coll-val').textContent = '₹' + selTotals.coll.toLocaleString('en-IN');
+    document.getElementById('gauge-rem-val').textContent = '₹' + (selTotals.net / 100000).toFixed(2) + ' L';
+  }
+
+  function filterAuditPara(para, btnEl) {
+    currentAuditPara = para;
+    document.querySelectorAll('#audit-para-chips .chip').forEach(c => c.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    renderAuditWorksheet();
+  }
+
+  function renderAuditWorksheet() {
+    const q = (document.getElementById('audit-search').value || '').toLowerCase();
+
+    const thead = document.getElementById('audit-worksheet-thead');
+    let hHtml = `<tr>
+      <th>Sl.</th>
+      <th>Customer Name</th>
+      <th>Para / Village</th>
+      <th>Page</th>
+      <th style="text-align:right;">May '24</th>
+      <th style="text-align:right;">Jan '25</th>
+      <th style="text-align:right;">June '25</th>`;
+
+    customCycles.forEach((c, cIdx) => {
+      const isSel = cIdx === selectedCycleIdx;
+      const star = isSel ? '⭐ ' : '';
+      hHtml += `
+        <th class="cycle-divider-left" style="text-align:right; background:${isSel ? '#047857' : '#065F46'};">✍️ ${star}${c.label} Book</th>
+        <th style="text-align:right; background:#B45309;">✍️ ${c.label} Recov.</th>
+        <th style="text-align:right; background:#9F1239;">${c.label} Net</th>
+      `;
+    });
+    hHtml += `</tr>`;
+    thead.innerHTML = hHtml;
+
+    const tbody = document.getElementById('audit-worksheet-tbody');
+    tbody.innerHTML = '';
+
+    let countRendered = 0;
+    const maxLimit = (showAllRows || q.length > 0 || currentAuditPara !== 'ALL') ? 600 : 100;
+
+    for (let rIdx = 0; rIdx < bookAuditData.length; rIdx++) {
+      const row = bookAuditData[rIdx];
+      if (currentAuditPara !== 'ALL' && row.para !== currentAuditPara) continue;
+      const match = row.name.toLowerCase().includes(q) || row.para.toLowerCase().includes(q) || String(row.sl).includes(q) || String(row.page).includes(q);
+      if (!match) continue;
+
+      if (countRendered >= maxLimit) break;
+      countRendered++;
+
+      let trHtml = `
+        <td style="color:var(--text-muted); font-weight:700;">#${row.sl}</td>
+        <td><strong>${row.name}</strong></td>
+        <td><span class="tag tag-green">${row.para}</span></td>
+        <td style="color:var(--text-muted); font-weight:700;">Pg #${row.page || '-'}</td>
+        <td style="text-align:right;">₹${(row.may24 || 0).toLocaleString('en-IN')}</td>
+        <td style="text-align:right;">₹${(row.jan25 || 0).toLocaleString('en-IN')}</td>
+        <td style="text-align:right; font-weight:700;">₹${(row.june25 || 0).toLocaleString('en-IN')}</td>
+      `;
+
+      customCycles.forEach((c, cIdx) => {
+        const cData = row.cycles[cIdx] || { book: 0, coll: 0 };
+        const net = (Number(cData.book) || 0) - (Number(cData.coll) || 0);
+        trHtml += `
+          <td class="cycle-divider-left" style="text-align:right; background:#F0FDF4;">
+            <input type="number" class="audit-input" value="${cData.book}" oninput="updateMultiCycleCell(${rIdx}, ${cIdx}, 'book', this.value)">
+          </td>
+          <td style="text-align:right; background:#FFFBEB;">
+            <input type="number" class="audit-input coll" value="${cData.coll}" oninput="updateMultiCycleCell(${rIdx}, ${cIdx}, 'coll', this.value)">
+          </td>
+          <td style="text-align:right; font-weight:900; font-size:11.5px; color:var(--red-due); background:#FFF1F2;" id="net-${rIdx}-${cIdx}">
+            ₹${net.toLocaleString('en-IN')}
+          </td>
+        `;
+      });
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = trHtml;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function updateMultiCycleCell(rIdx, cIdx, field, val) {
+    const num = Math.max(0, parseFloat(val) || 0);
+    bookAuditData[rIdx].cycles[cIdx][field] = num;
+
+    const cData = bookAuditData[rIdx].cycles[cIdx];
+    const net = (Number(cData.book) || 0) - (Number(cData.coll) || 0);
+
+    const netEl = document.getElementById(`net-${rIdx}-${cIdx}`);
+    if (netEl) netEl.innerText = '₹' + net.toLocaleString('en-IN');
+
+    selectedCycleIdx = cIdx;
+    saveAppData();
+    renderCycleTabsBar();
+    renderParaSummaryAndCharts();
+  }
+
+  // BUILT-IN 100% OFFLINE EXCEL (.CSV) EXPORTER
+  function exportAuditToCSV() {
+    const headers = [
+      "Sl. No", "Customer Name", "Village / Para", "Book Page",
+      "May 24 Due", "May 24 Coll", "Jan 25 Due", "June 25 Due"
+    ];
+    customCycles.forEach(c => {
+      headers.push(`${c.label} Book Credit`, `${c.label} Recovered`, `${c.label} Net Remaining`);
+    });
+
+    let csvContent = headers.join(",") + "\n";
+
+    bookAuditData.forEach(r => {
+      const rowArr = [
+        r.sl, `"${r.name}"`, `"${r.para}"`, r.page,
+        r.may24, r.coll24, r.jan25, r.june25
+      ];
+      customCycles.forEach((c, cIdx) => {
+        const cd = r.cycles[cIdx] || { book: 0, coll: 0 };
+        const net = (Number(cd.book) || 0) - (Number(cd.coll) || 0);
+        rowArr.push(cd.book, cd.coll, net);
+      });
+      csvContent += rowArr.join(",") + "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "Swasti_Fertilizer_MultiCycle_Audit.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function openTab(tabName, btnEl) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+  }
+
+  function triggerTab(tabName) {
+    const btns = document.querySelectorAll('.nav-tab');
+    const map = { home: 0, pos: 1, audit: 2, customers: 3, inventory: 4, distributors: 5 };
+    openTab(tabName, btns[map[tabName]]);
+  }
+
+  function renderHomeDashboard() {
+    const tbody = document.getElementById('home-tx-log');
+    tbody.innerHTML = '';
+    todayTransactions.forEach(tx => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color:var(--text-muted); font-size:11px;">${tx.time}</td>
+        <td><strong>${tx.cust}</strong></td>
+        <td>${tx.item}</td>
+        <td><span class="tag tag-green">${tx.mode}</span></td>
+        <td style="color:var(--green-pos); font-weight:700;">+₹${tx.profit}</td>
+        <td style="text-align:right; font-weight:800;">₹${tx.total}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderCustomerTable() {
+    const q = (document.getElementById('cust-search-input').value || '').toLowerCase();
+    const tbody = document.getElementById('cust-table-body');
+    tbody.innerHTML = '';
+    const lastIdx = customCycles.length - 1;
+    bookAuditData.filter(c => c.name.toLowerCase().includes(q) || c.para.toLowerCase().includes(q)).slice(0, 150).forEach(c => {
+      const latestNet = (c.cycles[lastIdx]?.book || 0) - (c.cycles[lastIdx]?.coll || 0);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color:var(--text-muted); font-weight:700;">#${c.sl}</td>
+        <td><strong>${c.name}</strong></td>
+        <td><span class="tag tag-green">${c.para}</span></td>
+        <td>Pg #${c.page || '-'}</td>
+        <td>₹15,000</td>
+        <td style="text-align:right; font-weight:800; color:var(--red-due);">₹${latestNet.toLocaleString('en-IN')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderSkuTable() {
+    const tbody = document.getElementById('sku-table-body');
+    tbody.innerHTML = '';
+    skuCatalog.forEach(s => {
+      const margin = s.sell - s.buy;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${s.name}</strong></td>
+        <td>${s.company}</td>
+        <td><strong>${s.pack}</strong></td>
+        <td style="color:var(--green-pos); font-weight:700;">${s.stock} Units</td>
+        <td>₹${s.buy}</td>
+        <td><strong>₹${s.sell}</strong></td>
+        <td><span class="tag tag-green">+₹${margin}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function populatePosDropdowns() {
+    const custSel = document.getElementById('pos-cust-select');
+    custSel.innerHTML = '';
+    bookAuditData.forEach((c, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = `${c.sl}. ${c.name} (${c.para})`;
+      custSel.appendChild(opt);
+    });
+
+    const skuSel = document.getElementById('pos-sku-select');
+    skuSel.innerHTML = '';
+    skuCatalog.forEach((s, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = `${s.name} [${s.pack}] — Sell: ₹${s.sell} | Buy: ₹${s.buy}`;
+      skuSel.appendChild(opt);
+    });
+    recalcPos();
+  }
+
+  function recalcPos() {
+    const s = skuCatalog[document.getElementById('pos-sku-select').value];
+    if (!s) return;
+    document.getElementById('pos-custom-sell').value = s.sell;
+    recalcPosCustom();
+  }
+
+  function recalcPosCustom() {
+    const s = skuCatalog[document.getElementById('pos-sku-select').value];
+    if (!s) return;
+    const qty = Math.max(1, parseInt(document.getElementById('pos-qty').value) || 1);
+    const sell = parseFloat(document.getElementById('pos-custom-sell').value) || s.sell;
+    const profit = sell - s.buy;
+    document.getElementById('pos-sku-cat').innerText = s.cat.toUpperCase();
+    document.getElementById('pos-buy-display').innerText = `₹${s.buy} (${s.pack})`;
+    document.getElementById('pos-sell-display').innerText = `₹${sell} (${s.pack})`;
+    document.getElementById('pos-unit-margin').innerText = `₹${profit} (${((profit/s.buy)*100).toFixed(1)}%)`;
+    document.getElementById('pos-grand-total').innerText = '₹' + (sell * qty).toLocaleString('en-IN');
+    document.getElementById('pos-total-profit').innerText = '₹' + (profit * qty).toLocaleString('en-IN');
+  }
+
+  function submitPosInvoice() {
+    const c = bookAuditData[document.getElementById('pos-cust-select').value];
+    const s = skuCatalog[document.getElementById('pos-sku-select').value];
+    const qty = parseInt(document.getElementById('pos-qty').value) || 1;
+    const sell = parseFloat(document.getElementById('pos-custom-sell').value);
+    const mode = document.getElementById('pos-mode').value;
+    const total = sell * qty;
+    const profit = (sell - s.buy) * qty;
+
+    todayTransactions.unshift({
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      cust: c.name,
+      item: `${s.name} x${qty}`,
+      mode: mode,
+      profit: profit,
+      total: total
+    });
+
+    saveAppData();
+    renderHomeDashboard();
+    alert(`✅ POS Invoice Generated for ${c.name}!`);
+    triggerTab('home');
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // SAFE AUTO-SAVE WRAPPER (NEVER CRASHES ON FILE:// OR IN-APP VIEWERS)
+  function saveAppData() {
+    try {
+      localStorage.setItem('swasti_audit_v2', JSON.stringify(bookAuditData));
+      localStorage.setItem('swasti_cycles_v2', JSON.stringify(customCycles));
+      localStorage.setItem('swasti_tx_v2', JSON.stringify(todayTransactions));
+    } catch (e) {
+      // Silently ignore if restricted by local file viewer
+    }
+  }
+
+  function loadAppData() {
+    try {
+      const savedAudit = localStorage.getItem('swasti_audit_v2');
+      const savedCycles = localStorage.getItem('swasti_cycles_v2');
+      const savedTx = localStorage.getItem('swasti_tx_v2');
+      if (savedAudit) bookAuditData = JSON.parse(savedAudit);
+      if (savedCycles) customCycles = JSON.parse(savedCycles);
+      if (savedTx) todayTransactions = JSON.parse(savedTx);
+    } catch (e) {
+      // Fallback to embedded 515 dataset
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    loadAppData();
+    renderAuditEngine();
+    renderCustomerTable();
+    renderSkuTable();
+    populatePosDropdowns();
+  });
+</script>
+</body>
+</html>
