@@ -1,0 +1,15 @@
+{
+  "name": "Swasti Fertilizer ERP",
+  "short_name": "Swasti ERP",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ECF3F0",
+  "theme_color": "#022C22",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/512/planting.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
